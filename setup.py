@@ -16,8 +16,8 @@ setup(
     packages=find_packages("src"),
     package_dir={"": "src"},
     install_requires=[
-        "boto3>=1.21",
-        "click>=8.1",
-        "rich>=12.2",
+        "boto3",
+        "click==8.0.4",  # black doesn't work with click 8.1+
+        "rich",
     ],
 )

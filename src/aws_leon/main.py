@@ -18,5 +18,4 @@ def main() -> None:
         )]
     )
     logging.getLogger("rich")
-    index.register()
-    index.index()
+    index.cli()
