@@ -1,1 +1,3 @@
-# aws-amicleaner
+# aws-leon
+
+![aws-leon](logo.png)
