@@ -3,13 +3,14 @@ from setuptools import setup, find_packages
 
 setup(
     name="aws-leon",
-    author="square-factory",
-    author_email="contact@square-factory.io",
+    author="sq4",
+    author_email="contact@sq4.io",
+    description_file="README.md",
     url="https://github.com/square-factory/aws-leon",
     description="AWS AMI cleaner",
     license="MIT",
     keywords=["aws", "ami", "cleaning", "snapshot", "finops"],
-    classifiers=["Programming Language :: Python :: 3.8"],
+    classifiers=["Programming Language :: Python :: 3.9"],
     entry_points={"console_scripts": ["aws-leon=aws_leon.main:main"]},
     zip_safe=True,
     include_package_data=True,
