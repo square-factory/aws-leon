@@ -43,7 +43,7 @@ jobs:
     steps:
       - add_ssh_keys:
           fingerprints:
-            - 'e1:d2:2b:a5:46:ad:73:57:37:ef:36:82:89:9a:35:6a'
+            - 'af:f2:56:d5:1b:94:44:26:bd:6e:da:92:5d:b0:68:35'
       - checkout
       - run:
           command: |
