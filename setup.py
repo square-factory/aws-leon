@@ -5,7 +5,6 @@ setup(
     name="aws-leon",
     author="sq4",
     author_email="contact@sq4.io",
-    description_file="README.md",
     url="https://github.com/square-factory/aws-leon",
     description="AWS AMI cleaner",
     license="MIT",
