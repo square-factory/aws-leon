@@ -38,6 +38,23 @@ jobs:
             pip install pipenv
             pipenv install twine
             pipenv run twine upload dist/*
+  bump_version:
+    <<: *defaults
+    steps:
+      - add_ssh_keys:
+          fingerprints:
+            - '62:1d:0d:2b:bf:d7:55:d8:4e:c4:43:69:76:97:59:32'
+      - checkout
+      - run:
+          command: |
+            pip install --upgrade bump2version
+            AWS_LEON_OLD_VERSION=$(python setup.py --version)
+            bump2version --current-version $(python setup.py --version) minor src/aws_leon/__init__.py
+            AWS_LEON_NEW_VERSION=$(python setup.py --version)
+            ssh-add -D && ssh-add ~/.ssh/id_rsa_*
+            git config --global user.email "frederic@martin.lc"
+            git config --global user.name "Frederic MARTIN"
+            git add . && git commit -m "🔖 Bump version from $AWS_LEON_OLD_VERSION to $AWS_LEON_NEW_VERSION [ci skip]" && git push --set-upstream origin ${CIRCLE_BRANCH}
 workflows:
   build_test_publish:
     jobs:
@@ -46,6 +63,9 @@ workflows:
           context: aws-leon
           requires:
             - build_test
+      - bump_version:
+          requires:
+            - test_pypi_publish
       # - pypi_publish:
       #     requires:
       #       - build_test
