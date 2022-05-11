@@ -13,7 +13,7 @@ jobs:
           command: |
             if [ "$CIRCLE_BRANCH" != "main" ]; then
                 SANITIZED_BRANCH_NAME=$(echo "$CIRCLE_BRANCH" | tr "/" "." | sed 's/-//')
-                sed -i -e "s/'$/\.$SANITIZED_BRANCH_NAME'/g" src/aws_leon/__init__.py
+                sed -i -e "s/'$/\.${SANITIZED_BRANCH_NAME}0'/g" src/aws_leon/__init__.py
             fi
             python setup.py sdist bdist_wheel
             pip install pipenv
@@ -30,7 +30,7 @@ jobs:
           command: |  # publish to Test PyPI
             if [ "$CIRCLE_BRANCH" != "main" ]; then
                 SANITIZED_BRANCH_NAME=$(echo "$CIRCLE_BRANCH" | tr "/" "." | sed 's/-//')
-                sed -i -e "s/'$/\.$SANITIZED_BRANCH_NAME'/g" src/aws_leon/__init__.py
+                sed -i -e "s/'$/\.${SANITIZED_BRANCH_NAME}0'/g" src/aws_leon/__init__.py
             fi
             python setup.py sdist bdist_wheel
             pip install pipenv
