@@ -2,7 +2,7 @@ version: 2.1
 aliases:
   - &defaults
     docker:
-      - image: circleci/python:3.7-bullseye
+      - image: cimg/python:3.10
 
 jobs:
   build_test:
@@ -12,8 +12,8 @@ jobs:
       - run:
           command: |
             python setup.py sdist bdist_wheel
-            sudo pip install pipenv
-            pipenv install dist/convrsn-0.0.2-py3-none-any.whl
+            pip install pipenv
+            pipenv install dist/aws_leon-0.0.1.dev0-py3-none-any.whl
             # pipenv install pytest
       # - run:
       #     command: |  # Run test suite
@@ -23,31 +23,19 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Init .pypirc
-          command: |
-            echo -e "[pypi]" >> ~/.pypirc
-            echo -e "username = __token__" >> ~/.pypirc
-            echo -e "password = $PYPI_TOKEN" >> ~/.pypirc
-      - run:
           command: |  # publish to Test PyPI
             python setup.py sdist bdist_wheel
-            sudo pip install pipenv
+            pip install pipenv
             pipenv install twine
-            pipenv run twine upload --repository testpypi dist/*
+            pipenv run twine upload -u $TWINE_USERNAME -p $TWINE_TOKEN --verbose --repository testpypi dist/*
   pypi_publish:
     <<: *defaults
     steps:
       - checkout
       - run:
-          name: Init .pypirc
-          command: |
-            echo -e "[pypi]" >> ~/.pypirc
-            echo -e "username = __token__" >> ~/.pypirc
-            echo -e "password = $PYPI_TOKEN" >> ~/.pypirc
-      - run:
           command: |  # publish to real PyPI
             python setup.py sdist bdist_wheel
-            sudo pip install pipenv
+            pip install pipenv
             pipenv install twine
             pipenv run twine upload dist/*
 workflows:
@@ -55,6 +43,7 @@ workflows:
     jobs:
       - build_test
       - test_pypi_publish:
+          context: aws-leon
           requires:
             - build_test
       # - pypi_publish:
