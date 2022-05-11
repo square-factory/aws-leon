@@ -12,7 +12,7 @@ jobs:
       - run:
           command: |
             if [ "$CIRCLE_BRANCH" != "main" ]; then
-              SANITIZED_BRANCH_NAME=$(echo "$CIRCLE_BRANCH" | sed 's/\/// | sed 's/-//')
+              SANITIZED_BRANCH_NAME=$(echo "$CIRCLE_BRANCH" | sed 's/\///' | sed 's/-//')
               sed -i -e "s/'$/\.${SANITIZED_BRANCH_NAME}0'/g" src/aws_leon/__init__.py
             fi
             python setup.py sdist bdist_wheel
@@ -29,7 +29,7 @@ jobs:
       - run:
           command: |  # publish to Test PyPI
             if [ "$CIRCLE_BRANCH" != "main" ]; then
-              SANITIZED_BRANCH_NAME=$(echo "$CIRCLE_BRANCH" | sed 's/\/// | sed 's/-//')
+              SANITIZED_BRANCH_NAME=$(echo "$CIRCLE_BRANCH" | sed 's/\///' | sed 's/-//')
               sed -i -e "s/'$/\.${SANITIZED_BRANCH_NAME}0'/g" src/aws_leon/__init__.py
             fi
             python setup.py sdist bdist_wheel
