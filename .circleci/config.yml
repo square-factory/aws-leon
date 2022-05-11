@@ -13,7 +13,7 @@ jobs:
           command: |
             python setup.py sdist bdist_wheel
             pip install pipenv
-            pipenv install dist/aws_leon-0.0.1.dev0-py3-none-any.whl
+            pipenv install dist/aws_leon-$(python setup.py --version)-py3-none-any.whl
             # pipenv install pytest
       # - run:
       #     command: |  # Run test suite
