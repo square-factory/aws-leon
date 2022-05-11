@@ -3,13 +3,6 @@ aliases:
   - &defaults
     docker:
       - image: circleci/python:3.10-bullseye
-  - &pypirc
-      - run:
-          name: Init .pypirc
-          command: |
-            echo -e "[pypi]" >> ~/.pypirc
-            echo -e "username = __token__" >> ~/.pypirc
-            echo -e "password = $PYPI_TOKEN" >> ~/.pypirc
 
 jobs:
   build_test:
@@ -29,7 +22,12 @@ jobs:
     <<: *defaults
     steps:
       - checkout
-      <<: *pypirc
+      - run:
+          name: Init .pypirc
+          command: |
+            echo -e "[pypi]" >> ~/.pypirc
+            echo -e "username = __token__" >> ~/.pypirc
+            echo -e "password = $PYPI_TOKEN" >> ~/.pypirc
       - run:
           command: |  # publish to Test PyPI
             python setup.py sdist bdist_wheel
@@ -40,7 +38,12 @@ jobs:
     <<: *defaults
     steps:
       - checkout
-      <<: *pypirc
+      - run:
+          name: Init .pypirc
+          command: |
+            echo -e "[pypi]" >> ~/.pypirc
+            echo -e "username = __token__" >> ~/.pypirc
+            echo -e "password = $PYPI_TOKEN" >> ~/.pypirc
       - run:
           command: |  # publish to real PyPI
             python setup.py sdist bdist_wheel
