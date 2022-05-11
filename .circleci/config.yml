@@ -11,6 +11,10 @@ jobs:
       - checkout
       - run:
           command: |
+            if [ "$CIRCLE_BRANCH" != "main" ]; then
+                SANITIZED_BRANCH_NAME=$(echo "$CIRCLE_BRANCH" | tr "/" "." | sed 's/-//')
+                sed -i -e "s/'$/\.$SANITIZED_BRANCH_NAME'/g" src/aws_leon/__init__.py
+            fi
             python setup.py sdist bdist_wheel
             pip install pipenv
             pipenv install dist/aws_leon-$(python setup.py --version)-py3-none-any.whl
@@ -24,6 +28,10 @@ jobs:
       - checkout
       - run:
           command: |  # publish to Test PyPI
+            if [ "$CIRCLE_BRANCH" != "main" ]; then
+                SANITIZED_BRANCH_NAME=$(echo "$CIRCLE_BRANCH" | tr "/" "." | sed 's/-//')
+                sed -i -e "s/'$/\.$SANITIZED_BRANCH_NAME'/g" src/aws_leon/__init__.py
+            fi
             python setup.py sdist bdist_wheel
             pip install pipenv
             pipenv install twine
