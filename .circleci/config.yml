@@ -15,6 +15,7 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Test python package build
           command: |
             python setup.py sdist bdist_wheel
             pip install pipenv
@@ -28,7 +29,8 @@ jobs:
     steps:
       - checkout
       - run:
-          command: |  # publish to Test PyPI
+          name: Build and upload to TestPypi
+          command: |
             python setup.py sdist bdist_wheel
             pip install pipenv
             pipenv install twine
@@ -38,7 +40,8 @@ jobs:
     steps:
       - checkout
       - run:
-          command: |  # publish to real PyPI
+          name: Build and upload to Pypi
+          command: |
             python setup.py sdist bdist_wheel
             pip install pipenv
             pipenv install twine
