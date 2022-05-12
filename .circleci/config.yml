@@ -3,7 +3,12 @@ aliases:
   - &defaults
     docker:
       - image: cimg/python:3.10
-
+  - &tagonly
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^\d+\.\d+\.\d+$/
 jobs:
   build_test:
     <<: *defaults
@@ -11,10 +16,6 @@ jobs:
       - checkout
       - run:
           command: |
-            if [ "$CIRCLE_BRANCH" != "main" ]; then
-              SANITIZED_BRANCH_NAME=$(echo "$CIRCLE_BRANCH" | sed 's/\///' | sed 's/-//')
-              sed -i -e "s/'$/\.${SANITIZED_BRANCH_NAME}0'/g" src/aws_leon/__init__.py
-            fi
             python setup.py sdist bdist_wheel
             pip install pipenv
             pipenv install dist/aws_leon-$(python setup.py --version)-py3-none-any.whl
@@ -28,14 +29,10 @@ jobs:
       - checkout
       - run:
           command: |  # publish to Test PyPI
-            if [ "$CIRCLE_BRANCH" != "main" ]; then
-              SANITIZED_BRANCH_NAME=$(echo "$CIRCLE_BRANCH" | sed 's/\///' | sed 's/-//')
-              sed -i -e "s/'$/\.${SANITIZED_BRANCH_NAME}0'/g" src/aws_leon/__init__.py
-            fi
             python setup.py sdist bdist_wheel
             pip install pipenv
             pipenv install twine
-            pipenv run twine upload -u $TWINE_USERNAME -p $TWINE_TOKEN --verbose --repository testpypi dist/*
+            pipenv run twine upload -u "__token__" -p $TWINE_TEST_TOKEN --verbose --repository testpypi dist/*
   pypi_publish:
     <<: *defaults
     steps:
@@ -45,7 +42,7 @@ jobs:
             python setup.py sdist bdist_wheel
             pip install pipenv
             pipenv install twine
-            pipenv run twine upload dist/*
+            pipenv run twine upload -u "__token__" -p $TWINE_TOKEN --verbose dist/*
   bump_version:
     <<: *defaults
     steps:
@@ -57,7 +54,7 @@ jobs:
           command: |
             pip install --upgrade bump2version
             AWS_LEON_OLD_VERSION=$(python setup.py --version)
-            bump2version --current-version $(python setup.py --version) minor src/aws_leon/__init__.py
+            bump2version --current-version $AWS_LEON_OLD_VERSION minor src/aws_leon/__init__.py
             AWS_LEON_NEW_VERSION=$(python setup.py --version)
             ssh-add -D && ssh-add ~/.ssh/id_rsa_*
             git config --global user.email "frederic@martin.lc"
@@ -68,10 +65,12 @@ workflows:
     jobs:
       - build_test
       - test_pypi_publish:
+          <<: *tagonly
           context: aws-leon
           requires:
             - build_test
       - bump_version:
+          <<: *tagonly
           requires:
             - test_pypi_publish
       # - pypi_publish:
